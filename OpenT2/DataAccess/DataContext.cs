@@ -15,5 +15,7 @@ namespace OpenT2.Models
         }
 
         public Microsoft.EntityFrameworkCore.DbSet<Country> Countries { get; init; }
+
+        //public Microsoft.EntityFrameworkCore.DbSet<Job> Jobs { get; init; }
     }
 }

@@ -11,6 +11,7 @@ namespace OpenT2.DataAccess
     public interface IDataContext
     {
         DbSet<Country> Countries { get; init; }
+        //DbSet<Job> Jobs { get; init; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

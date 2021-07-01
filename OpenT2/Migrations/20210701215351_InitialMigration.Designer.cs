@@ -9,7 +9,7 @@ using OpenT2.Models;
 namespace OpenT2.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210701201136_InitialMigration")]
+    [Migration("20210701215351_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
