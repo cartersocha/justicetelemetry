@@ -10,6 +10,7 @@ using OpenT2.Models;
 using OpenT2.Repositories;
 using Azure.Monitor.OpenTelemetry.Exporter;
 using OpenTelemetry.Trace;
+using System.Data.SqlClient;
 
 namespace OpenT2
 {
@@ -28,6 +29,22 @@ namespace OpenT2
             services.AddOpenTelemetryTracing((builder) => builder
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
+                .AddSqlClientInstrumentation(options =>
+                {
+                    options.SetDbStatementForText = true;
+                    options.RecordException = true;
+                    options.Enrich
+                    = (activity, eventName, rawObject) =>
+                    {
+                        if (eventName.Equals("OnCustom"))
+                        {
+                            if (rawObject is SqlCommand cmd)
+                            {
+                                activity.SetTag("db.commandTimeout", cmd.CommandTimeout);
+                            }
+                        };
+                    };
+                   })
                 .AddAzureMonitorTraceExporter(o =>
                 {
                     o.ConnectionString = $"InstrumentationKey=a95de56a-a39d-4fc9-9646-6d7c480ee9cf;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/";
@@ -35,7 +52,6 @@ namespace OpenT2
             services.AddDbContext<DataContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IDataContext>(provider => provider.GetService<DataContext>());
             services.AddScoped<ICountryRepository, CountryRepository>();
-            
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

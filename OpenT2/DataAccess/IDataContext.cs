@@ -10,7 +10,7 @@ namespace OpenT2.DataAccess
 {
     public interface IDataContext
     {
-        DbSet<Country> Countries { get; set; }
+        DbSet<Country> Countries { get; init; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
