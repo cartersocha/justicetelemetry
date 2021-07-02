@@ -8,6 +8,6 @@ namespace OpenT2.Repositories
 {
     public interface ICountryRepository
     {
-        Task<IEnumerable<Country>> GetAll();
+        Task<IEnumerable<Country1>> GetAll();
     }
 }

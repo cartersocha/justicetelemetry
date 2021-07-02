@@ -17,7 +17,7 @@ namespace OpenT2.Repositories
             _context = context;
 
         }
-        public async Task<IEnumerable<Country>> GetAll()
+        public async Task<IEnumerable<Country1>> GetAll()
         {
             Activity.Current?.AddEvent(new ActivityEvent("CountryAllCalled"));
             Activity.Current?.AddBaggage("http.method", "GET");

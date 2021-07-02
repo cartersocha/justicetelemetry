@@ -1,30 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace OpenT2.Models
+namespace OpenT2
 {
-    public class Job
+    public partial class Job
     {
         public Job()
         {
-
+            Employees = new HashSet<Employee>();
         }
 
-        public Job(int jobid, string jobtitle, int minsalary, int maxsalary)
-        {
-            job_id = jobid;
-            job_title = jobtitle;
-            min_salary = minsalary;
-            max_salary = maxsalary;
-        }
-        public int job_id { get; set; }
+        public int JobId { get; set; }
+        public string JobTitle { get; set; }
+        public decimal? MinSalary { get; set; }
+        public decimal? MaxSalary { get; set; }
 
-        public string job_title { get; set; }
-
-        public int min_salary { get; set; }
-
-        public int max_salary { get; set; }
+        public virtual ICollection<Employee> Employees { get; set; }
     }
 }
