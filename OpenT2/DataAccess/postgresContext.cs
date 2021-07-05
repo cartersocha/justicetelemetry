@@ -22,7 +22,7 @@ namespace OpenT2
         public virtual DbSet<Department> Departments { get; set; }
         public virtual DbSet<Dependent> Dependents { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
-        public virtual DbSet<Job> Jobs { get; set; }
+        public virtual DbSet<Job> Jobs { get; init; }
         public virtual DbSet<Location> Locations { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
 

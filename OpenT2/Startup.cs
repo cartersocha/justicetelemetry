@@ -52,6 +52,7 @@ namespace OpenT2
             services.AddDbContext<postgresContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IDataContext>(provider => provider.GetService<postgresContext>());
             services.AddScoped<ICountryRepository, CountryRepository>();
+            services.AddScoped<IJobRepository, JobRepository>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

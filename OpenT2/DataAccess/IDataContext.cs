@@ -12,6 +12,9 @@ namespace OpenT2.DataAccess
     {
         DbSet<Country1> Countries { get; init; }
         //DbSet<Job> Jobs { get; init; }
+
+        DbSet<Job> Jobs { get; init; }
+        
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

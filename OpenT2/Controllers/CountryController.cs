@@ -27,7 +27,7 @@ namespace OpenT2.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Country1>>> GetCountries()
         {
-            using (Activity? activity = activitySource.StartActivity("CountryAll"))
+            using (Activity activity = activitySource.StartActivity("CountryAll"))
             {
                 var countries = await _countryRepository.GetAll();
                 
