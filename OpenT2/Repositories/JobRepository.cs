@@ -23,5 +23,10 @@ namespace OpenT2.Repositories
             Activity.Current?.AddBaggage("http.method", "GET");
             return await _context.Jobs.ToListAsync();
         }
+
+            public async Task<Job> Get(int id)
+            {
+               return await _context.Jobs.FindAsync(id);
+           }
     }
 }
