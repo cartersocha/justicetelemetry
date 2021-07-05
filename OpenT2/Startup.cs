@@ -12,6 +12,7 @@ using Azure.Monitor.OpenTelemetry.Exporter;
 using OpenTelemetry.Trace;
 using System.Data.SqlClient;
 using System;
+using OpenTelemetry.Resources;
 
 namespace OpenT2
 {
@@ -32,6 +33,7 @@ namespace OpenT2
                 .AddSource("Justice&CarterAPI-Country")
                 .AddSource("AnotherAPI")
                 .AddSource("Hello")
+                .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("CartersAPi"))
                 .AddSqlClientInstrumentation(options =>
                 {
                     options.SetDbStatementForText = true;
