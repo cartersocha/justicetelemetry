@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace OpenT2.Controllers
 {
@@ -15,11 +16,13 @@ namespace OpenT2.Controllers
     public class CountryController : ControllerBase
     {
         static ActivitySource activitySource = new ActivitySource("Justice&CarterAPI-Country");
+         private readonly ILogger<CountryController> logger;
 
         private readonly ICountryRepository _countryRepository;
-        public CountryController(ICountryRepository countryRepository)
+        public CountryController(ILogger<CountryController> logger, ICountryRepository countryRepository)
         {
-            _countryRepository = countryRepository;
+            this.logger = logger;
+            this._countryRepository = countryRepository;
         }
 
         [HttpGet]
