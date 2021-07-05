@@ -11,6 +11,7 @@ using OpenT2.Repositories;
 using Azure.Monitor.OpenTelemetry.Exporter;
 using OpenTelemetry.Trace;
 using System.Data.SqlClient;
+using System;
 
 namespace OpenT2
 {
@@ -20,7 +21,6 @@ namespace OpenT2
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -45,10 +45,13 @@ namespace OpenT2
                         };
                     };
                    })
-                .AddAzureMonitorTraceExporter(o =>
-                {
-                    o.ConnectionString = $"InstrumentationKey=a95de56a-a39d-4fc9-9646-6d7c480ee9cf;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/";
-                }));
+               //.AddAzureMonitorTraceExporter(o =>
+                //{
+                  // o.ConnectionString = $"InstrumentationKey=a95de56a-a39d-4fc9-9646-6d7c480ee9cf;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/";
+                //}));
+                //.AddJaegerExporter());
+                .AddZipkinExporter());
+                //.AddOtlpExporter(options => options.Endpoint = new Uri("http://localhost:4317"));
             services.AddDbContext<postgresContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IDataContext>(provider => provider.GetService<postgresContext>());
             services.AddScoped<ICountryRepository, CountryRepository>();

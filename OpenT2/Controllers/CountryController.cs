@@ -10,8 +10,6 @@ using System.Threading.Tasks;
 
 namespace OpenT2.Controllers
 {
-
-
     [Route("api/[controller]")]
     [ApiController]
     public class CountryController : ControllerBase
