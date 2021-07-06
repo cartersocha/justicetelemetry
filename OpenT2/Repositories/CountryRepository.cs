@@ -13,10 +13,10 @@ namespace OpenT2.Repositories
 {
     public class CountryRepository : ICountryRepository
     {
-        static ActivitySource activitySource = new ActivitySource("AnotherAPI");
+        static ActivitySource activitySource = new ActivitySource("CountryRepo");
 
-        private static readonly ActivitySource Hello = new ActivitySource(
-        "Hello");
+        private static readonly ActivitySource timer = new ActivitySource(
+        "Timer");
         private readonly IDataContext _context;
         public CountryRepository(IDataContext context)
         {
@@ -27,23 +27,26 @@ namespace OpenT2.Repositories
         {
            
                 TimeDelay();
+                
             
-            using (Activity activity = activitySource.StartActivity("Definitely"))
+            using (Activity activity = activitySource.StartActivity("CountryList"))
             {
-            Activity.Current?.AddEvent(new ActivityEvent("Definitely"));
+            Activity.Current?.AddEvent(new ActivityEvent("CountryListStart"));
             Activity.Current?.AddBaggage("http.method", "GET");
             return await _context.Countries.ToListAsync();
+            
             }
             
         }
 
         public void TimeDelay()
         {
-            using (Activity activity = Hello.StartActivity("Maybe"))
+            using (Activity activity = timer.StartActivity("Timer"))
             {
-            Activity.Current?.AddEvent(new ActivityEvent("CountryMaybe"));
+            Activity.Current?.AddEvent(new ActivityEvent("TimerStart"));
             Activity.Current?.AddBaggage("http.method", "GET");
             System.Threading.Thread.Sleep(1000);
+            activity?.AddEvent(new ActivityEvent("TimerEnd"));
             }
         }
         

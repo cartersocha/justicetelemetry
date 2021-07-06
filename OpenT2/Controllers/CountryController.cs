@@ -15,7 +15,7 @@ namespace OpenT2.Controllers
     [ApiController]
     public class CountryController : ControllerBase
     {
-        static ActivitySource activitySource = new ActivitySource("Justice&CarterAPI-Country");
+        static ActivitySource activitySource = new ActivitySource("CountryController");
          private readonly ILogger<CountryController> logger;
 
         private readonly ICountryRepository _countryRepository;

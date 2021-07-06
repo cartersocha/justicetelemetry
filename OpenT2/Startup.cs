@@ -30,25 +30,23 @@ namespace OpenT2
             services.AddOpenTelemetryTracing((builder) => builder
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
-                .AddSource("Justice&CarterAPI-Country")
-                .AddSource("AnotherAPI")
-                .AddSource("Hello")
+                .AddSource("Timer","CountryController","CountryRepo")
                 .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("CartersAPi"))
                 .AddSqlClientInstrumentation(options =>
                 {
-                    options.SetDbStatementForText = true;
-                    options.RecordException = true;
-                    options.Enrich
-                    = (activity, eventName, rawObject) =>
-                    {
-                        if (eventName.Equals("OnCustom"))
-                        {
-                            if (rawObject is SqlCommand cmd)
-                            {
-                                activity.SetTag("db.commandTimeout", cmd.CommandTimeout);
-                            }
-                        };
-                    };
+                    //options.SetDbStatementForText = true;
+                   // options.RecordException = true;
+                   // options.Enrich
+                   // = (activity, eventName, rawObject) =>
+                   // {
+                   //     if (eventName.Equals("OnCustom"))
+                  //      {
+                    //        if (rawObject is SqlCommand cmd)
+                    //        {
+                    //            activity.SetTag("db.commandTimeout", cmd.CommandTimeout);
+                    //        }
+                    //    };
+                   // };
                    })
                //.AddAzureMonitorTraceExporter(o =>
                 //{
@@ -56,9 +54,9 @@ namespace OpenT2
                 //}));
                 //.AddJaegerExporter());
                 .AddZipkinExporter(b =>
-                {
+               {
                     var zipkinHostName = "localhost";
-                    b.Endpoint = new Uri($"http://{zipkinHostName}:9411/api/v2/spans");
+                  b.Endpoint = new Uri($"http://{zipkinHostName}:9411/api/v2/spans");
                 }));
                 //.AddOtlpExporter(options => options.Endpoint = new Uri("http://localhost:4317"));
             services.AddDbContext<postgresContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
