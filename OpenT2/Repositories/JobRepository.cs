@@ -31,7 +31,7 @@ namespace OpenT2.Repositories
             public async Task<Job> Get(int id)
             {
                 TimeDelay();
-                
+
                 using (Activity activity = activitySource.StartActivity("JobId"))
                 {
                     activity?.SetTag("JobId", id);

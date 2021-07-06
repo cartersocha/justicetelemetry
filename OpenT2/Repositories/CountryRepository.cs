@@ -1,13 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OpenT2.DataAccess;
 using OpenT2.Models;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using System;
-
 
 namespace OpenT2.Repositories
 {
@@ -24,9 +21,7 @@ namespace OpenT2.Repositories
         }
         public async Task<IEnumerable<Country1>> GetAll()
         {
-           
-                TimeDelay();
-                
+            TimeDelay();
             
             using (Activity activity = activitySource.StartActivity("select.postgres.country1"))
             {
