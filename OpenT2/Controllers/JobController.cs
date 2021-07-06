@@ -45,8 +45,7 @@ namespace OpenT2.Controllers
         public async Task<ActionResult<Job>> GetSpecificJob(int id)
         {
             using (Activity activity = jobSource.StartActivity("JobOne"))
-            {
-
+            {   
                 var job = await _jobRepository.Get(id);
                 if(job == null)
                     return NotFound();
