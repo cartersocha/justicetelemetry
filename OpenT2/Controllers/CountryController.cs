@@ -16,6 +16,7 @@ namespace OpenT2.Controllers
     public class CountryController : ControllerBase
     {
         static ActivitySource activitySource = new ActivitySource("CountryController");
+
          private readonly ILogger<CountryController> logger;
 
         private readonly ICountryRepository _countryRepository;
@@ -31,7 +32,7 @@ namespace OpenT2.Controllers
             using (Activity activity = activitySource.StartActivity("CountryAll"))
             {
                 var countries = await _countryRepository.GetAll();
-                
+
                 return Ok(countries);
             }
         }

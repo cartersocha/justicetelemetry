@@ -15,12 +15,17 @@ namespace OpenT2.Controllers
     [ApiController]
     public class JobController : ControllerBase
     {
-        static ActivitySource activitySource = new ActivitySource("Justice&CarterAPI-Job");
+        static ActivitySource activitySource = new ActivitySource("JobAll");
+
+        static ActivitySource jobSource = new ActivitySource("JobOne");
+
+        private readonly ILogger<JobController> logger;
 
         private readonly IJobRepository _jobRepository;
-        public JobController(IJobRepository jobRepository)
+        public JobController(ILogger<JobController> logger, IJobRepository jobRepository)
         {
-            _jobRepository = jobRepository;
+            this.logger = logger;
+            this._jobRepository = jobRepository;
         }
 
         [HttpGet]
@@ -39,11 +44,20 @@ namespace OpenT2.Controllers
          [HttpGet("{id}")]
         public async Task<ActionResult<Job>> GetSpecificJob(int id)
         {
-            var job = await _jobRepository.Get(id);
-            if(job == null)
-                return NotFound();
-    
-            return Ok(job);
+            using (Activity activity = jobSource.StartActivity("JobOne"))
+            {
+
+                var job = await _jobRepository.Get(id);
+                if(job == null)
+                    return NotFound();
+                
+                this.logger.LogInformation(
+                    "Job id generated {id}: {job}",
+                    job.JobId,
+                    job);
+        
+                return Ok(job);
+            }
         }
 
    

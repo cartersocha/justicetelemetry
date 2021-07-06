@@ -30,7 +30,7 @@ namespace OpenT2
             services.AddOpenTelemetryTracing((builder) => builder
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
-                .AddSource("Timer","CountryController","CountryRepo")
+                .AddSource("Timer","CountryController","CountryRepo","Job*")
                 .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("CartersAPi"))
                 .AddSqlClientInstrumentation(options =>
                 {
@@ -48,17 +48,16 @@ namespace OpenT2
                     //    };
                    // };
                    })
-               //.AddAzureMonitorTraceExporter(o =>
+              // .AddAzureMonitorTraceExporter(o =>
                 //{
                   // o.ConnectionString = $"InstrumentationKey=a95de56a-a39d-4fc9-9646-6d7c480ee9cf;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/";
                 //}));
                 //.AddJaegerExporter());
-                .AddZipkinExporter(b =>
+               .AddZipkinExporter(b =>
                {
                     var zipkinHostName = "localhost";
                   b.Endpoint = new Uri($"http://{zipkinHostName}:9411/api/v2/spans");
                 }));
-                //.AddOtlpExporter(options => options.Endpoint = new Uri("http://localhost:4317"));
             services.AddDbContext<postgresContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IDataContext>(provider => provider.GetService<postgresContext>());
             services.AddScoped<ICountryRepository, CountryRepository>();

@@ -14,7 +14,6 @@ namespace OpenT2.Repositories
     public class CountryRepository : ICountryRepository
     {
         static ActivitySource activitySource = new ActivitySource("CountryRepo");
-
         private static readonly ActivitySource timer = new ActivitySource(
         "Timer");
         private readonly IDataContext _context;
@@ -29,12 +28,11 @@ namespace OpenT2.Repositories
                 TimeDelay();
                 
             
-            using (Activity activity = activitySource.StartActivity("CountryList"))
+            using (Activity activity = activitySource.StartActivity("select.postgres.country1"))
             {
-            Activity.Current?.AddEvent(new ActivityEvent("CountryListStart"));
-            Activity.Current?.AddBaggage("http.method", "GET");
+            Activity.Current?.AddEvent(new ActivityEvent("start select.postgres.country1"));
+            activity?.SetTag("functionName", "SQLDB");
             return await _context.Countries.ToListAsync();
-            
             }
             
         }
