@@ -31,6 +31,7 @@ namespace OpenT2.Controllers
         {
             using (Activity activity = activitySource.StartActivity("CountryAll"))
             {
+                Activity.Current?.AddBaggage("country.operation.controller","all");
                 var countries = await _countryRepository.GetAll();
 
                 return Ok(countries);
