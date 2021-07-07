@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using OpenTelemetry;
 
 namespace OpenT2.Controllers
 {
@@ -31,6 +32,7 @@ namespace OpenT2.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Job>>> GetJobs()
         {
+            
             using (Activity activity = activitySource.StartActivity("JobAll"))
             {
 
@@ -46,6 +48,7 @@ namespace OpenT2.Controllers
         {
             using (Activity activity = jobSource.StartActivity("JobOne"))
             {   
+                
                 var job = await _jobRepository.Get(id);
                 if(job == null)
                     return NotFound();

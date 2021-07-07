@@ -13,6 +13,10 @@ using OpenTelemetry.Trace;
 using System.Data.SqlClient;
 using System;
 using OpenTelemetry.Resources;
+using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
+using OpenTelemetry.Instrumentation.SqlClient;
+using System.Diagnostics;
 
 namespace OpenT2
 {
@@ -27,27 +31,25 @@ namespace OpenT2
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var listener = new ActivityListener
+            {
+                ShouldListenTo = _ => true,
+                ActivityStopped = activity =>
+                {
+                    foreach (var (key, value) in activity.Baggage)
+                    {
+                        activity.AddTag(key, value);
+                    }
+                }
+            };
+            ActivitySource.AddActivityListener(listener);
+
             services.AddOpenTelemetryTracing((builder) => builder
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
                 .AddSource("Timer","CountryController","CountryRepo","Job*")
                 .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("CartersAPi"))
-                .AddSqlClientInstrumentation(options =>
-                {
-                    //options.SetDbStatementForText = true;
-                   // options.RecordException = true;
-                   // options.Enrich
-                   // = (activity, eventName, rawObject) =>
-                   // {
-                   //     if (eventName.Equals("OnCustom"))
-                  //      {
-                    //        if (rawObject is SqlCommand cmd)
-                    //        {
-                    //            activity.SetTag("db.commandTimeout", cmd.CommandTimeout);
-                    //        }
-                    //    };
-                   // };
-                   })
+                .AddSqlClientInstrumentation(options => options.EnableConnectionLevelAttributes = true)
               // .AddAzureMonitorTraceExporter(o =>
                 //{
                   // o.ConnectionString = $"InstrumentationKey=a95de56a-a39d-4fc9-9646-6d7c480ee9cf;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/";
@@ -67,6 +69,7 @@ namespace OpenT2
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "OpenT2", Version = "v1" });
             });
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

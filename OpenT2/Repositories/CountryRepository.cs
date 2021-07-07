@@ -27,6 +27,7 @@ namespace OpenT2.Repositories
             {
             Activity.Current?.AddEvent(new ActivityEvent("start select.postgres.country1"));
             activity?.SetTag("functionName", "SQLDB");
+            Activity.Current?.AddBaggage("country.operation.id","select");
             return await _context.Countries.ToListAsync();
             }
             
