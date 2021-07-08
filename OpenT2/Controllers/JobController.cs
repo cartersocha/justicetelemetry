@@ -56,7 +56,7 @@ namespace OpenT2.Controllers
                 this.logger.LogInformation(
                     "Job id generated {id}: {job}",
                     job.JobId,
-                    job);
+                    job.JobTitle);
         
                 return Ok(job);
             }

@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Instrumentation.SqlClient;
 using System.Diagnostics;
+using OpenTelemetry;
 
 namespace OpenT2
 {
@@ -50,16 +51,17 @@ namespace OpenT2
                 .AddSource("Timer","CountryController","CountryRepo","Job*")
                 .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("CartersAPi"))
                 .AddSqlClientInstrumentation(options => options.EnableConnectionLevelAttributes = true)
+                .AddConsoleExporter());
               // .AddAzureMonitorTraceExporter(o =>
                 //{
                   // o.ConnectionString = $"InstrumentationKey=a95de56a-a39d-4fc9-9646-6d7c480ee9cf;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/";
                 //}));
                 //.AddJaegerExporter());
-               .AddZipkinExporter(b =>
-               {
-                    var zipkinHostName = "localhost";
-                  b.Endpoint = new Uri($"http://{zipkinHostName}:9411/api/v2/spans");
-                }));
+               //.AddZipkinExporter(b =>
+               //{
+               //     var zipkinHostName = "localhost";
+               //   b.Endpoint = new Uri($"http://{zipkinHostName}:9411/api/v2/spans");
+               // }));
             services.AddDbContext<postgresContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IDataContext>(provider => provider.GetService<postgresContext>());
             services.AddScoped<ICountryRepository, CountryRepository>();
