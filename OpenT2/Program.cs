@@ -8,9 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-
-
-
 namespace OpenT2
 {
     public class Program

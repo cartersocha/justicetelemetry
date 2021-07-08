@@ -6,16 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using OpenT2.DataAccess;
-using OpenT2.Models;
 using OpenT2.Repositories;
 using Azure.Monitor.OpenTelemetry.Exporter;
 using OpenTelemetry.Trace;
-using System.Data.SqlClient;
 using System;
 using OpenTelemetry.Resources;
-using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
-using OpenTelemetry.Instrumentation.SqlClient;
 using System.Diagnostics;
 using OpenTelemetry;
 
@@ -47,21 +42,27 @@ namespace OpenT2
 
             services.AddOpenTelemetryTracing((builder) => builder
                 .AddAspNetCoreInstrumentation()
-                .AddHttpClientInstrumentation()
+                .AddEntityFrameworkCoreInstrumentation()
+                //.AddHttpClientInstrumentation()
+                //.AddSqlClientInstrumentation(options => options.EnableConnectionLevelAttributes = true)
+                .SetSampler(new TraceIdRatioBasedSampler(1.0))
                 .AddSource("Timer","CountryController","CountryRepo","Job*")
                 .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("CartersAPi"))
-                .AddSqlClientInstrumentation(options => options.EnableConnectionLevelAttributes = true)
-                .AddConsoleExporter());
-              // .AddAzureMonitorTraceExporter(o =>
+               // for logs
+              // .AddConsoleExporter());
+              //monitor testing
+              //  .AddAzureMonitorTraceExporter(o =>
                 //{
                   // o.ConnectionString = $"InstrumentationKey=a95de56a-a39d-4fc9-9646-6d7c480ee9cf;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/";
                 //}));
+                //jaeger testing
                 //.AddJaegerExporter());
-               //.AddZipkinExporter(b =>
-               //{
-               //     var zipkinHostName = "localhost";
-               //   b.Endpoint = new Uri($"http://{zipkinHostName}:9411/api/v2/spans");
-               // }));
+                //zipkin testing
+               .AddZipkinExporter(b =>
+               {
+                   var zipkinHostName = "localhost";
+                  b.Endpoint = new Uri($"http://{zipkinHostName}:9411/api/v2/spans");
+               }));
             services.AddDbContext<postgresContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IDataContext>(provider => provider.GetService<postgresContext>());
             services.AddScoped<ICountryRepository, CountryRepository>();
