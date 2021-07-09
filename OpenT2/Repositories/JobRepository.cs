@@ -1,11 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using OpenT2.DataAccess;
-using OpenT2.Models;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace OpenT2.Repositories
 {
@@ -14,15 +12,15 @@ namespace OpenT2.Repositories
         private readonly IDataContext _context;
 
         static ActivitySource activitySource = new ActivitySource("JobRepo");
+        private readonly ILogger<JobRepository> logger;
 
-        private static readonly ActivitySource timer = new ActivitySource(
-        "JobTimer");
-
-        public JobRepository(IDataContext context)
+        public JobRepository(IDataContext context,ILogger<JobRepository> logger)
         {
             _context = context;
+            this.logger = logger;
 
         }
+
         public async Task<IEnumerable<Job>> GetAll()
         {
             return await _context.Jobs.ToListAsync();
@@ -35,8 +33,16 @@ namespace OpenT2.Repositories
                 using (Activity activity = activitySource.StartActivity("JobId"))
                 {
                     activity?.SetTag("JobId", id);
+                    Activity.Current?.AddBaggage("jobId", id.ToString());
                     Job foundJob = await _context.Jobs.FindAsync(id);
                     activity?.SetTag("JobTitle", foundJob.JobTitle);
+                    Activity.Current?.AddBaggage("jobTitle",foundJob.JobTitle);
+
+                    this.logger.LogInformation(
+                    "Job id generated {id}: {job}",
+                    "Carter",
+                    "PM");
+
                     return foundJob;
                 }
              
@@ -44,7 +50,7 @@ namespace OpenT2.Repositories
         
         public void TimeDelay()
         {
-            using (Activity activity = timer.StartActivity("JobTimer"))
+            using (Activity activity = activitySource.StartActivity("JobTimer"))
             {
             Activity.Current?.AddEvent(new ActivityEvent("TimerStart"));
             System.Threading.Thread.Sleep(1000);

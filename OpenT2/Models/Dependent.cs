@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace OpenT2
+﻿namespace OpenT2
 {
     public partial class Dependent
     {
