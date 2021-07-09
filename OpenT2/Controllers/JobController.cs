@@ -1,14 +1,9 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OpenT2.Models;
 using OpenT2.Repositories;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using OpenTelemetry;
 
 namespace OpenT2.Controllers
 {
@@ -16,9 +11,7 @@ namespace OpenT2.Controllers
     [ApiController]
     public class JobController : ControllerBase
     {
-        static ActivitySource activitySource = new ActivitySource("JobAll");
-
-        static ActivitySource jobSource = new ActivitySource("JobOne");
+        static ActivitySource activitySource = new ActivitySource("JobController");
 
         private readonly ILogger<JobController> logger;
 
@@ -46,9 +39,9 @@ namespace OpenT2.Controllers
          [HttpGet("{id}")]
         public async Task<ActionResult<Job>> GetSpecificJob(int id)
         {
-            using (Activity activity = jobSource.StartActivity("JobOne"))
-            {   
-                
+            using (Activity activity = activitySource.StartActivity("JobOne"))
+            {      
+                Activity.Current?.AddBaggage("Controller","JobFinder");           
                 var job = await _jobRepository.Get(id);
                 if(job == null)
                     return NotFound();
@@ -57,7 +50,9 @@ namespace OpenT2.Controllers
                     "Job id generated {id}: {job}",
                     job.JobId,
                     job.JobTitle);
-        
+
+                Activity.Current?.AddBaggage("Title",job.JobTitle);
+
                 return Ok(job);
             }
         }
