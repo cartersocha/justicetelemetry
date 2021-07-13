@@ -57,11 +57,12 @@ namespace OpenT2
                 //jaeger testing
                 //.AddJaegerExporter());
                 //zipkin testing
-               .AddZipkinExporter(b =>
-               {
-                   var zipkinHostName = "localhost";
-                  b.Endpoint = new Uri($"http://{zipkinHostName}:9411/api/v2/spans");
-               }));
+                .AddZipkinExporter());
+               //.AddZipkinExporter(b =>
+               //{
+                 //  var zipkinHostName = "localhost";
+                 // b.Endpoint = new Uri($"http://{zipkinHostName}:9411/api/v2/spans");
+               //}));
             services.AddDbContext<postgresContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IDataContext>(provider => provider.GetService<postgresContext>());
             services.AddScoped<ICountryRepository, CountryRepository>();
