@@ -72,6 +72,8 @@ namespace OpenT2
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "OpenT2", Version = "v1" });
             });
+
+           
             
         }
 
@@ -85,11 +87,19 @@ namespace OpenT2
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "OpenT2 v1"));
             }
 
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials()); // allow credentials
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthorization();
+
+            
 
             app.UseEndpoints(endpoints =>
             {
