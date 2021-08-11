@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using OpenTelemetry;
 
 namespace OpenT2.Repositories
 {
@@ -33,10 +34,10 @@ namespace OpenT2.Repositories
                 using (Activity activity = activitySource.StartActivity("JobId"))
                 {
                     activity?.SetTag("JobId", id);
-                    Activity.Current?.AddBaggage("jobId", id.ToString());
+                    Baggage.Current.SetBaggage("jobId", id.ToString());
                     Job foundJob = await _context.Jobs.FindAsync(id);
                     activity?.SetTag("JobTitle", foundJob.JobTitle);
-                    Activity.Current?.AddBaggage("jobTitle",foundJob.JobTitle);
+                    Baggage.Current.SetBaggage("jobTitle",foundJob.JobTitle);
 
                     this.logger.LogInformation(
                     "Job id generated {id}: {job}",

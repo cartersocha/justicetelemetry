@@ -4,38 +4,23 @@ import './App.css';
 import { Button, Container } from 'semantic-ui-react';
 import axios from 'axios';
 
-import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/tracing';
-import { WebTracerProvider } from '@opentelemetry/web';
+import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
+
 import { ZipkinExporter } from '@opentelemetry/exporter-zipkin';
-import { Span } from '@opentelemetry/api';
-const provider = new WebTracerProvider({
 
-});
 
-provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
-provider.addSpanProcessor(new SimpleSpanProcessor(new ZipkinExporter({
-  // testing interceptor
-  // getExportRequestHeaders: ()=> {
-  //   return {
-  //     foo: 'bar',
-  //   }
-  // }
-})));
+const provider = new WebTracerProvider();
+
+provider.addSpanProcessor(new SimpleSpanProcessor(new ZipkinExporter()));
 provider.register();
 
-//registerInstrumentations({
-  //instrumentations: [
-    //new UserInteractionInstrumentation(),
-  //],
-//});
-
 const tracer = provider.getTracer('example-tracer-web');
-
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function() {
   const parentSpan = tracer.startSpan('foo');
-  doWork(parentSpan);
+  doWork();
   let [jobs, setJobs] = useState();
   let getJobsList = (): any=>{
     axios.get("https://localhost:5001/api/Job").then(res => {
@@ -47,7 +32,7 @@ export default function() {
     parentSpan.end();
   }
 
-function doWork(parent: Span) {
+function doWork() {
     // Start another span. In this example, the main method already started a
     // span, so that'll be the parent span, and this will be a child span.
     const span = tracer.startSpan('doWork');
