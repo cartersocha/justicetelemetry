@@ -43,6 +43,7 @@ namespace OpenT2
             services.AddOpenTelemetryTracing((builder) => builder
                 .AddAspNetCoreInstrumentation()
                 .AddEntityFrameworkCoreInstrumentation()
+                .AddHttpClientInstrumentation()
                 //.AddSqlClientInstrumentation(options => options.EnableConnectionLevelAttributes = true)
                 .SetSampler(new TraceIdRatioBasedSampler(1.0))
                 .AddSource("Country*","Job*")

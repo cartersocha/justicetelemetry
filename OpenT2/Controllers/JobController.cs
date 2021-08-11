@@ -4,13 +4,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
 
 namespace OpenT2.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class JobController : ControllerBase
     {
+         private readonly string url = "https://opentelemetryapis.azurewebsites.net/api/DistributedTracing?code=/eyznUFV3urIXDTpatxQan17VGR/A8FbYQPNmOIff/mcA4H7/FBhHg==";
+
         static ActivitySource activitySource = new ActivitySource("JobController");
 
         private readonly ILogger<JobController> logger;
@@ -25,7 +29,13 @@ namespace OpenT2.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Job>>> GetJobs()
         {
-            
+            using (Activity activity = activitySource.StartActivity("JobFunctionCall"))
+            {
+            HttpClient client = new HttpClient();
+            var response = await client.GetAsync(url);
+            var text = await response.Content.ReadAsStringAsync();
+            }
+
             using (Activity activity = activitySource.StartActivity("JobAll"))
             {
 
