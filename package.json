@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@opentelemetry/instrumentation-xml-http-request": "^0.24.0"
+  }
+}
