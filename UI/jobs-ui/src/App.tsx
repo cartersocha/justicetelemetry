@@ -6,14 +6,31 @@ import axios from 'axios';
 
 import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
-
+import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { ZipkinExporter } from '@opentelemetry/exporter-zipkin';
-
+import { XMLHttpRequestInstrumentation } from '@opentelemetry/instrumentation-xml-http-request';
+import { ZoneContextManager } from '@opentelemetry/context-zone';
 
 const provider = new WebTracerProvider();
 
 provider.addSpanProcessor(new SimpleSpanProcessor(new ZipkinExporter()));
 provider.register();
+
+
+provider.register({
+  contextManager: new ZoneContextManager(),
+});
+
+registerInstrumentations({
+  instrumentations: [
+    new XMLHttpRequestInstrumentation({
+      propagateTraceHeaderCorsUrls: ['http://localhost:8090']
+    }),
+  ],
+});
+
+
+
 
 const tracer = provider.getTracer('example-tracer-web');
 
@@ -28,8 +45,9 @@ export default function() {
       console.log(res);
       setJobs(res.data);
       span.end(); 
+      parentSpan.end();
     })
-    parentSpan.end();
+
   }
 
 function doWork() {
