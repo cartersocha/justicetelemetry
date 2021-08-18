@@ -8,9 +8,11 @@ import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-tra
 import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { ZipkinExporter } from '@opentelemetry/exporter-zipkin';
+
 import { XMLHttpRequestInstrumentation } from '@opentelemetry/instrumentation-xml-http-request';
 import { ZoneContextManager } from '@opentelemetry/context-zone';
 
+const api = require('@opentelemetry/api');
 const provider = new WebTracerProvider();
 
 provider.addSpanProcessor(new SimpleSpanProcessor(new ZipkinExporter()));
@@ -24,7 +26,7 @@ provider.register({
 registerInstrumentations({
   instrumentations: [
     new XMLHttpRequestInstrumentation({
-      propagateTraceHeaderCorsUrls: ['http://localhost:8090']
+      propagateTraceHeaderCorsUrls: ['http://localhost:5001']
     }),
   ],
 });
@@ -37,23 +39,26 @@ const tracer = provider.getTracer('example-tracer-web');
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function() {
   const parentSpan = tracer.startSpan('foo');
-  doWork();
+  doWork(parentSpan);
   let [jobs, setJobs] = useState();
   let getJobsList = (): any=>{
     axios.get("https://localhost:5001/api/Job").then(res => {
-      const span = tracer.startSpan('API');
+      const ctx = api.trace.setSpan(api.context.active(), parentSpan);
+      const span = tracer.startSpan('API', undefined, ctx);
       console.log(res);
       setJobs(res.data);
       span.end(); 
-      parentSpan.end();
+      
     })
 
   }
+  parentSpan.end();
 
-function doWork() {
+function doWork(parentSpan: any) {
     // Start another span. In this example, the main method already started a
     // span, so that'll be the parent span, and this will be a child span.
-    const span = tracer.startSpan('doWork');
+    const ctx = api.trace.setSpan(api.context.active(), parentSpan);
+    const span = tracer.startSpan('doWork', undefined, ctx);
   
     // simulate some random work.
     for (let i = 0; i <= Math.floor(Math.random() * 40000000); i += 1) {
