@@ -41,9 +41,6 @@ registerInstrumentations({
   ],
 });
 
-
-
-
 const tracer = provider.getTracer('example-tracer-web');
 
 // eslint-disable-next-line import/no-anonymous-default-export
