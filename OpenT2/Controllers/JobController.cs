@@ -31,9 +31,20 @@ namespace OpenT2.Controllers
         {
             using (Activity activity = activitySource.StartActivity("JobFunctionCall"))
             {
-            HttpClient client = new HttpClient();
-            var response = await client.GetAsync(url);
-            var text = await response.Content.ReadAsStringAsync();
+                    ActivityContext contextToInject = default;
+                    if (activity != null)
+                    {
+                        contextToInject = activity.Context;
+                    }
+                    else if (Activity.Current != null)
+                    {
+                        contextToInject = Activity.Current.Context;
+                    }
+
+                    HttpClient client = new HttpClient();
+                    client.DefaultRequestHeaders.Add("X-Version","1");
+                    var response = await client.GetAsync(url);
+                    var text = await response.Content.ReadAsStringAsync();
             }
 
             using (Activity activity = activitySource.StartActivity("JobAll"))
