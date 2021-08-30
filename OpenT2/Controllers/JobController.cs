@@ -5,6 +5,9 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
+using System;
 
 namespace OpenT2.Controllers
 {
@@ -14,6 +17,7 @@ namespace OpenT2.Controllers
     public class JobController : ControllerBase
     {
          private readonly string url = "https://opentelemetryapis.azurewebsites.net/api/DistributedTracing?code=/eyznUFV3urIXDTpatxQan17VGR/A8FbYQPNmOIff/mcA4H7/FBhHg==";
+         private static readonly TextMapPropagator Propagator = new TraceContextPropagator();
 
         static ActivitySource activitySource = new ActivitySource("JobController");
 
@@ -40,11 +44,15 @@ namespace OpenT2.Controllers
                     {
                         contextToInject = Activity.Current.Context;
                     }
-
                     HttpClient client = new HttpClient();
+
+                    Propagator.Inject(new PropagationContext(contextToInject, Baggage.Current), client, this.HeaderValueSetter);
+
                     client.DefaultRequestHeaders.Add("X-Version","1");
                     var response = await client.GetAsync(url);
                     var text = await response.Content.ReadAsStringAsync();
+
+                    
             }
 
             using (Activity activity = activitySource.StartActivity("JobAll"))
@@ -78,6 +86,20 @@ namespace OpenT2.Controllers
             }
         }
 
-   
+        private  IEnumerable<string> HeaderValueGetter (HttpResponseMessage request, string name)
+        {
+            if (request.Headers.TryGetValues(name, out var values))
+            {
+                return values;
+            }
+
+            return null;
+        }
+
+        private void HeaderValueSetter (HttpClient request, string name, string value)
+        {
+            request.DefaultRequestHeaders.Add(name, value);
+        }
+
     }
 }
