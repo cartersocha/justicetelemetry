@@ -7,12 +7,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using OpenT2.DataAccess;
 using OpenT2.Repositories;
-using Azure.Monitor.OpenTelemetry.Exporter;
 using OpenTelemetry.Trace;
-using System;
 using OpenTelemetry.Resources;
 using System.Diagnostics;
 using OpenTelemetry;
+using System.Diagnostics.Metrics;
+using OpenTelemetry.Metrics;
+
 
 namespace OpenT2
 {
