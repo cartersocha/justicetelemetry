@@ -40,6 +40,11 @@ namespace OpenT2
             };
             ActivitySource.AddActivityListener(listener);
 
+            using var meterProvider = Sdk.CreateMeterProviderBuilder()
+                    .AddSource("RollTide")
+                    .AddConsoleExporter()
+                    .Build();
+
             services.AddOpenTelemetryTracing((builder) => builder
                 .AddAspNetCoreInstrumentation()
                 .AddEntityFrameworkCoreInstrumentation()
@@ -49,7 +54,7 @@ namespace OpenT2
                 .AddSource("Country*","Job*")
                 .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("CartersAPi"))
                // for logs
-              // .AddConsoleExporter());
+                .AddConsoleExporter());
               //monitor testing
               //  .AddAzureMonitorTraceExporter(o =>
                 //{
@@ -58,12 +63,13 @@ namespace OpenT2
                 //jaeger testing
                 //.AddJaegerExporter());
                 //zipkin testing
-                .AddZipkinExporter());
+               // .AddZipkinExporter());
                //.AddZipkinExporter(b =>
                //{
                  //  var zipkinHostName = "localhost";
                  // b.Endpoint = new Uri($"http://{zipkinHostName}:9411/api/v2/spans");
                //}));
+
             services.AddDbContext<postgresContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IDataContext>(provider => provider.GetService<postgresContext>());
             services.AddScoped<ICountryRepository, CountryRepository>();

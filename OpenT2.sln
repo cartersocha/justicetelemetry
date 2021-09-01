@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenT2", "OpenT2\OpenT2.csproj", "{943FBD06-0391-47CD-82C5-478CB6CD8759}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenT3", "..\OpenT2 - Copy\OpenT3\OpenT3.csproj", "{5F74B38A-197F-46F0-871B-6AE5E5027D71}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry;
+using System.Diagnostics.Metrics;
 
 namespace OpenT2.Repositories
 {
@@ -13,6 +14,7 @@ namespace OpenT2.Repositories
         private readonly IDataContext _context;
 
         static ActivitySource activitySource = new ActivitySource("JobRepo");
+        private static readonly Meter MyMeter = new Meter("JobTide", "0.0.69");
         private readonly ILogger<JobRepository> logger;
 
         public JobRepository(IDataContext context,ILogger<JobRepository> logger)

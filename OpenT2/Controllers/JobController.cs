@@ -52,17 +52,17 @@ namespace OpenT2.Controllers
                     var response = await client.GetAsync(url);
                     var text = await response.Content.ReadAsStringAsync();
 
-                    
+
             }
 
-            using (Activity activity = activitySource.StartActivity("JobAll"))
-            {
+                    using (var activity1 = activitySource.StartActivity("JobAll"))
+                    {
 
-                var jobs = await _jobRepository.GetAll();
+                        var jobs = await _jobRepository.GetAll();
 
-                
-                return Ok(jobs);
-            }
+                        
+                        return Ok(jobs);
+                    }
         }
 
          [HttpGet("{id}")]
