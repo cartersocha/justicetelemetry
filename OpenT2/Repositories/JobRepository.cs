@@ -14,7 +14,8 @@ namespace OpenT2.Repositories
         private readonly IDataContext _context;
 
         static ActivitySource activitySource = new ActivitySource("JobRepo");
-        private static readonly Meter MyMeter = new Meter("JobTide", "0.0.69");
+        private static readonly Meter MyMeter = new Meter("RollTide", "0.0.1");
+
         private readonly ILogger<JobRepository> logger;
 
         public JobRepository(IDataContext context,ILogger<JobRepository> logger)
@@ -26,6 +27,8 @@ namespace OpenT2.Repositories
 
         public async Task<IEnumerable<Job>> GetAll()
         {
+            await GenerateMetricsAsync();
+
             return await _context.Jobs.ToListAsync();
         }
 
@@ -59,6 +62,25 @@ namespace OpenT2.Repositories
             System.Threading.Thread.Sleep(1000);
             activity?.AddEvent(new ActivityEvent("TimerEnd"));
             }
+        }
+
+        public async Task GenerateMetricsAsync()
+        {
+            int i = 1;
+            var observableCounter = MyMeter.CreateObservableCounter<long>(
+                "observable-counter",
+                () =>
+                {
+                    var tag1 = new KeyValuePair<string, object>("tag1", "value1");
+                    var tag2 = new KeyValuePair<string, object>("tag2", "value2");
+                    return new List<Measurement<long>>()
+                    {
+                    // Report an absolute value (not an increment/delta value).
+                    new Measurement<long>(i++ * 10, tag1, tag2),
+                    };
+                });
+
+            await Task.Delay(10000);
         }
     }
 }
